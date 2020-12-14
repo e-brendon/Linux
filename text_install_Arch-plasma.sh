@@ -64,7 +64,7 @@ printf "\nUser passwword:\n";
 arch_chroot "passwd $myusername; sleep 2";
 arch_chroot "echo '$myusername ALL=(ALL) ALL' | tee -a /etc/sudoers"; # sudo grep $myusername /etc/sudoers;
 
-arch_chroot "print '\n[repo-ck] \nServer = https://mirror.lesviallon.fr/$repo/os/$arch \nServer = http://repo-ck.com/$arch' >> /etc/pacman.conf";
+arch_chroot "printf '\n[repo-ck] \nServer = https://mirror.lesviallon.fr/$repo/os/$arch \nServer = http://repo-ck.com/$arch' >> /etc/pacman.conf";
 arch_chroot "pacman-key -r 5EE46C4C --keyserver hkp://pool.sks-keyservers.net && pacman-key --lsign-key 5EE46C4C";
 arch_chroot "pacman -Sy linux-ck-skylake linux-ck-skylake-headers";
 
@@ -74,10 +74,7 @@ arch_chroot "sudo pacman -S unzip unrar p7zip mlocate pulseaudio pulseaudio-alsa
 # Enabling services
 arch_chroot "sudo systemctl enable NetworkManager";
 
-printf "\n\n\nDISMOUNTING PARTITIONS AND REBOOTING SYSTEM NOW\n\n\n"; sleep 3;
-
-umount -R /mnt/;
-
+arch-chroot /mnt
 # reboot
 
 # Mais informações:
