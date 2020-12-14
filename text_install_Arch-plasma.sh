@@ -7,6 +7,8 @@ myusername="unckros"
 arch_chroot(){
     arch-chroot /mnt /bin/bash -c "${1}"
 }
+printf '\n[repo-ck] \nServer = https://mirror.lesviallon.fr/$repo/os/$arch \nServer = http://repo-ck.com/$arch'
+pacman-key -r 5EE46C4C --keyserver hkp://pool.sks-keyservers.net && pacman-key --lsign-key 5EE46C4C
 
 mkfs.fat -F32 /dev/nvme0n1p1
 mkfs.ext4 /dev/nvme0n1p2
@@ -31,7 +33,7 @@ mount /dev/nvme0n1p1 /mnt/boot
 pacman -Sy reflector git wget --needed;
 reflector --verbose -l 70 --sort rate --save /etc/pacman.d/mirrorlist
 
-pacstrap /mnt base base-devel linux-firmware nano vim efibootmgr plasma sddm tlp --noconfirm
+pacstrap /mnt base base-devel linux-firmware nano vim efibootmgr plasma sddm tlp linux-ck-skylake linux-ck-skylake-headers --noconfirm
 
 genfstab -U -p /mnt >> /mnt/etc/fstab
 #arch-chroot /mnt
@@ -39,6 +41,9 @@ genfstab -U -p /mnt >> /mnt/etc/fstab
 # Locale, timedate. Keyboard Layout
 arch_chroot "ln -sf /usr/share/zoneinfo/America/Cuiaba /etc/localtime";
 arch_chroot "hwclock --systohc";
+
+cp /etc/pacman.d/mirrorlist /mnt/pacman.d/mirrorlist
+cp /etc/pacman.conf /mnt/etc/pacman.conf
 
 # Otimizar os locales do locale.gen com expressões regulares, assim como para ativar o repositório multilib
 arch_chroot "nano /etc/locale.gen";
@@ -64,9 +69,8 @@ printf "\nUser passwword:\n";
 arch_chroot "passwd $myusername; sleep 2";
 arch_chroot "echo '$myusername ALL=(ALL) ALL' | tee -a /etc/sudoers"; # sudo grep $myusername /etc/sudoers;
 
-arch_chroot "printf '\n[repo-ck] \nServer = https://mirror.lesviallon.fr/$repo/os/$arch \nServer = http://repo-ck.com/$arch' >> /etc/pacman.conf";
+#arch_chroot "printf '\n[repo-ck] \nServer = https://mirror.lesviallon.fr/$repo/os/$arch \nServer = http://repo-ck.com/$arch' >> /etc/pacman.conf";
 arch_chroot "pacman-key -r 5EE46C4C --keyserver hkp://pool.sks-keyservers.net && pacman-key --lsign-key 5EE46C4C";
-arch_chroot "pacman -Sy linux-ck-skylake linux-ck-skylake-headers";
 
 # Preguiça
 arch_chroot "sudo pacman -S unzip unrar p7zip mlocate pulseaudio pulseaudio-alsa pavucontrol alsa-firmware alsa-utils a52dec faac faad2 flac jasper lame libdca libdv libmad libmpeg2 libtheora libvorbis libxv wavpack x264 xvidcore gstreamer gst-plugins-base gst-plugins-base-libs gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav gvfs gvfs-afc gvfs-gphoto2 gvfs-mtp blueman gvfs-nfs gvfs-smb --noconfirm";
