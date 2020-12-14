@@ -72,7 +72,7 @@ arch_chroot "passwd $myusername; sleep 2";
 arch_chroot "echo '$myusername ALL=(ALL) ALL' | tee -a /etc/sudoers"; # sudo grep $myusername /etc/sudoers;
 
 #arch_chroot "printf '\n[repo-ck] \nServer = https://mirror.lesviallon.fr/$repo/os/$arch \nServer = http://repo-ck.com/$arch' >> /etc/pacman.conf";
-arch_chroot "efibootmgr -q --disk /dev/nvme0n1 --part 1 --create --label "Arch Linux" --loader "\vmlinuz-linux-ck-skylake" --unicode 'root=PARTUUID="e70a05a1-daf4-a24f-8a63-22646671375c" rw initrd=\initramfs-linux-ck-skylake.img quiet rd.udev.log-priority=0 pci=noaer nowatchdog' --verbose";
+#arch_chroot "efibootmgr -q --disk /dev/nvme0n1 --part 1 --create --label "Arch Linux" --loader "\vmlinuz-linux-ck-skylake" --unicode 'root=PARTUUID="e70a05a1-daf4-a24f-8a63-22646671375c" rw initrd=\initramfs-linux-ck-skylake.img quiet rd.udev.log-priority=0 pci=noaer nowatchdog' --verbose";
 # Preguiça
 arch_chroot "sudo pacman -S unzip unrar p7zip mlocate pulseaudio pulseaudio-alsa pavucontrol alsa-firmware alsa-utils a52dec faac faad2 flac jasper lame libdca libdv libmad libmpeg2 libtheora libvorbis libxv wavpack x264 xvidcore gstreamer gst-plugins-base gst-plugins-base-libs gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav gvfs gvfs-afc gvfs-gphoto2 gvfs-mtp blueman gvfs-nfs gvfs-smb --noconfirm";
 
