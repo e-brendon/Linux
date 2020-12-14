@@ -9,7 +9,7 @@ arch_chroot(){
 }
 
 mkfs.fat -F32 /dev/nvme0n1p1
-mkfs.ext4 -f /dev/nvme0n1p2
+mkfs.ext4 /dev/nvme0n1p2
 
 mount /dev/nvme0n1p2 /mnt
 mkdir /mnt/boot
