@@ -31,9 +31,7 @@ mount /dev/nvme0n1p1 /mnt/boot
 pacman -Sy reflector git wget --needed;
 reflector --verbose -l 70 --sort rate --save /etc/pacman.d/mirrorlist
 
-pacstrap /mnt base base-devel linux-firmware\
-nano vim efibootmgr\
-plasma sddm tlp --noconfirm
+pacstrap /mnt base base-devel linux-firmware nano vim efibootmgr plasma sddm tlp --noconfirm
 
 genfstab -U -p /mnt >> /mnt/etc/fstab
 #arch-chroot /mnt
@@ -71,16 +69,7 @@ arch_chroot "pacman-key -r 5EE46C4C --keyserver hkp://pool.sks-keyservers.net &&
 arch_chroot "pacman -Sy linux-ck-skylake linux-ck-skylake-headers";
 
 # Preguiça
-arch_chroot "sudo pacman -S unzip unrar\
-p7zip mlocate pulseaudio pulseaudio-alsa\
-pavucontrol alsa-firmware alsa-utils a52dec\
-faac faad2 flac jasper lame libdca libdv\
-libmad libmpeg2 libtheora libvorbis libxv\
-wavpack x264 xvidcore gstreamer\
-gst-plugins-base gst-plugins-base-libs\
-gst-plugins-good gst-plugins-bad gst-plugins-ugly\
-gst-libav gvfs gvfs-afc gvfs-gphoto2 gvfs-mtp\
-blueman gvfs-nfs gvfs-smb --noconfirm";
+arch_chroot "sudo pacman -S unzip unrar p7zip mlocate pulseaudio pulseaudio-alsa pavucontrol alsa-firmware alsa-utils a52dec faac faad2 flac jasper lame libdca libdv libmad libmpeg2 libtheora libvorbis libxv wavpack x264 xvidcore gstreamer gst-plugins-base gst-plugins-base-libs gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav gvfs gvfs-afc gvfs-gphoto2 gvfs-mtp blueman gvfs-nfs gvfs-smb --noconfirm";
 
 # Enabling services
 arch_chroot "sudo systemctl enable NetworkManager";
