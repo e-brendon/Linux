@@ -7,7 +7,7 @@ myusername="unckros"
 arch_chroot(){
     arch-chroot /mnt /bin/bash -c "${1}"
 }
-printf '\n[repo-ck] \nServer = https://mirror.lesviallon.fr/$repo/os/$arch \nServer = http://repo-ck.com/$arch'
+printf '\n[repo-ck] \nServer = https://mirror.lesviallon.fr/$repo/os/$arch \nServer = http://repo-ck.com/$arch' >> /etc/pacman.conf
 pacman-key -r 5EE46C4C --keyserver hkp://pool.sks-keyservers.net && pacman-key --lsign-key 5EE46C4C
 
 mkfs.fat -F32 /dev/nvme0n1p1
