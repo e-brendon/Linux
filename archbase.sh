@@ -1,17 +1,18 @@
 #!/bin/bash
 
-myhostname="arch"
+myhostname="archlinux"
 myusername="unckros"
 
 # Função para inserir comandos no sistema montando em /mnt
 arch_chroot(){
     arch-chroot /mnt /bin/bash -c "${1}"
 }
-printf '\n[repo-ck] \nServer = https://mirror.lesviallon.fr/$repo/os/$arch \nServer = http://repo-ck.com/$arch' >> /etc/pacman.conf
+#repositório do kernel CK
+echo [repo-ck] \nServer = https://mirror.lesviallon.fr/$repo/os/$arch \nServer = http://repo-ck.com/$arch >> /etc/pacman.conf
 pacman-key -r 5EE46C4C --keyserver hkp://pool.sks-keyservers.net && pacman-key --lsign-key 5EE46C4C
 
-mkfs.fat -F32 /dev/nvme0n1p1
-mkfs.ext4 /dev/nvme0n1p2
+mkfs.fat -F32 -b BOOT /dev/nvme0n1p1
+mkfs.f2fs -l ROOT -O extra_attr,inode_checksum,sb_checksum,compression /dev/nvme0n1p2
 
 mount /dev/nvme0n1p2 /mnt
 mkdir /mnt/boot
@@ -29,35 +30,26 @@ mount /dev/nvme0n1p1 /mnt/boot
 #mount -o defaults,noatime,space_cache,ssd,compress=zstd,subvol=/arch/@home /dev/nvme0n1p2 /mnt/home
 #mount -o defaults,noatime,space_cache,ssd,compress=zstd,subvol=/arch/@snapshots /dev/sda2 /mnt/.snapshots
 
-#Para atualizar os repositórios do Arch:
-pacman -Sy reflector git wget --needed;
-reflector --verbose -l 70 --sort rate --save /etc/pacman.d/mirrorlist
-
-pacstrap /mnt base base-devel linux-firmware nano vim efibootmgr plasma sddm tlp --noconfirm
+pacstrap /mnt base base-devel linux-firmware nano vim efibootmgr linux-ck-skylake linux-ck-skylake-headers dhcpcd tlp --noconfirm
 arch_chroot "pacman-key -r 5EE46C4C --keyserver hkp://pool.sks-keyservers.net && pacman-key --lsign-key 5EE46C4C";
-arch_chroot "linux-ck-skylake linux-ck-skylake-headers --noconfirm";
 
 genfstab -U -p /mnt >> /mnt/etc/fstab
-#arch-chroot /mnt
+cp /etc/pacman.conf /mnt/etc/pacman.conf
 
 # Locale, timedate. Keyboard Layout
 arch_chroot "ln -sf /usr/share/zoneinfo/America/Cuiaba /etc/localtime";
 arch_chroot "hwclock --systohc";
 
-cp /etc/pacman.d/mirrorlist /mnt/pacman.d/mirrorlist
-cp /etc/pacman.conf /mnt/etc/pacman.conf
-
-# Otimizar os locales do locale.gen com expressões regulares, assim como para ativar o repositório multilib
+# Otimizar os locales do locale.gen com expressões regulares.
 arch_chroot "nano /etc/locale.gen";
 arch_chroot "locale-gen";
-#arch_chroot "echo LANG=en_US.UTF-8 >> /etc/locale.conf";
-arch_chroot "echo KEYMAP=br-abnt2 >> /etc/vconsole.conf"; # Ou   localectl set-keymap --no-convert br-abnt2
+arch_chroot "echo KEYMAP=br-abnt2 >> /etc/vconsole.conf"; #localectl set-keymap --no-convert br-abnt2
 arch_chroot "localectl set-x11-keymap br abnt2";
 
 # Hosts
 arch_chroot "echo $myhostname >> /etc/hostname";
 arch_chroot "printf '\n127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$myhostname.localdomain	$myhostname' >> /etc/hosts"; # nano /etc/hosts
-
+#deve ficar assim:
 # 127.0.0.1	localhost
 # ::1		localhost
 # 127.0.1.1	$myhostname.localdomain	$myhostname
@@ -71,13 +63,19 @@ printf "\nUser passwword:\n";
 arch_chroot "passwd $myusername; sleep 2";
 arch_chroot "echo '$myusername ALL=(ALL) ALL' | tee -a /etc/sudoers"; # sudo grep $myusername /etc/sudoers;
 
-#arch_chroot "printf '\n[repo-ck] \nServer = https://mirror.lesviallon.fr/$repo/os/$arch \nServer = http://repo-ck.com/$arch' >> /etc/pacman.conf";
-#arch_chroot "efibootmgr -q --disk /dev/nvme0n1 --part 1 --create --label "Arch Linux" --loader "\vmlinuz-linux-ck-skylake" --unicode 'root=PARTUUID="e70a05a1-daf4-a24f-8a63-22646671375c" rw initrd=\initramfs-linux-ck-skylake.img quiet rd.udev.log-priority=0 pci=noaer nowatchdog' --verbose";
-# Preguiça
-arch_chroot "sudo pacman -S unzip unrar p7zip mlocate pulseaudio pulseaudio-alsa pavucontrol alsa-firmware alsa-utils a52dec faac faad2 flac jasper lame libdca libdv libmad libmpeg2 libtheora libvorbis libxv wavpack x264 xvidcore gstreamer gst-plugins-base gst-plugins-base-libs gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav gvfs gvfs-afc gvfs-gphoto2 gvfs-mtp blueman gvfs-nfs gvfs-smb --noconfirm";
+#descobrir como pegar apenas o UUID do disco root e por aqui
+#arch_chroot "efibootmgr -q --disk /dev/nvme0n1 --part 1 --create --label "ArchLinux" --loader "\vmlinuz-linux-ck-skylake" --unicode 'root=PARTUUID="e70a05a1-daf4-a24f-8a63-22646671375c" rw initrd=\initramfs-linux-ck-skylake.img quiet rd.udev.log-priority=0 pci=noaer nowatchdog' --verbose";
+
+# pacotes rede e gerenciar arquivos
+arch_chroot "sudo pacman -S networkmanager unzip unrar               \
+p7zip mlocate a52dec faac faad2 flac jasper lame libdca              \ 
+libdv libmad libmpeg2 libtheora libvorbis libxv wavpack              \ 
+x264 xvidcore gstreamer gst-plugins-base gst-plugins-base-libs       \ 
+gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav gvfs     \ 
+gvfs-afc gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb --noconfirm";
 
 # Enabling services
-arch_chroot "sudo systemctl enable NetworkManager";
+arch_chroot "systemctl enable NetworkManager";
 
 arch-chroot /mnt
 # reboot
