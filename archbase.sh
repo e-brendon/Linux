@@ -63,8 +63,8 @@ printf "\nUser passwword:\n";
 arch_chroot "passwd $myusername; sleep 2";
 arch_chroot "echo '$myusername ALL=(ALL) ALL' | tee -a /etc/sudoers"; # sudo grep $myusername /etc/sudoers;
 
-arch_chroot "DIS = blkid -s UUID -o value /dev/nvme0n1p2"
-#arch_chroot "efibootmgr -q --disk /dev/nvme0n1 --part 1 --create --label "ArchLinux" --loader "\vmlinuz-linux-ck-skylake" --unicode 'root=PARTUUID=$DIS rw initrd=\initramfs-linux-ck-skylake.img quiet rd.udev.log-priority=0 pci=noaer nowatchdog' --verbose";
+arch_chroot "UUID=$(blkid -s UUID -o value /dev/sda2)"
+#arch_chroot "efibootmgr -q --disk /dev/nvme0n1 --part 1 --create --label "ArchLinux" --loader "\vmlinuz-linux-ck-skylake" --unicode 'root=PARTUUID=$UUID rw initrd=\initramfs-linux-ck-skylake.img quiet rd.udev.log-priority=0 pci=noaer nowatchdog' --verbose";
 
 # pacotes rede e gerenciar arquivos
 arch_chroot "sudo pacman -S networkmanager unzip unrar               \
