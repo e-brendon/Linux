@@ -56,7 +56,7 @@ arch_chroot "printf '\n127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$myhostnam
 
 # User passwords
 printf "\n\n\n\nCONFIGURING USER\n\n\n\n"; sleep 3;
-arch_chroot "useradd -m -G wheel $myusername; sleep 2"; #useradd -m -g users -G wheel $myusername;
+arch_chroot "useradd -m -c "Brendon Esteves" -G wheel $myusername; sleep 2"; #useradd -m -g users -G wheel $myusername;
 printf "\nRoot passwword:\n";
 arch_chroot "passwd; sleep 2";
 printf "\nUser passwword:\n";
