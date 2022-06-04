@@ -1,7 +1,7 @@
 #!/bin/bash
 
 myhostname="archlinux"
-myusername="unckros"
+myusername="brendon"
 
 # Função para inserir comandos no sistema montando em /mnt
 arch_chroot(){
