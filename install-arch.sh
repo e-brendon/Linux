@@ -1,37 +1,37 @@
 #!/bin/bash
 
 #VARIAVEIS DE USUARIO
-USUARIO='seuUsuario'
-SENHA_USUARIO='suaSenha'
-SENHA_ROOT='senhaRoot'
+USUARIO='brendon'
+SENHA_USUARIO='123'
+SENHA_ROOT='123'
 
 #CRIANDO TABELA DE PARTIÇÃO PARA DISCO 1
-parted /dev/nvme0n1 mklabel gpt
+parted /dev/sda mklabel gpt
 #CRIANDO PARTIÇÃO /EFI
-parted /dev/nvme0n1 mkpart primary fat32 0% 512MB
+parted /dev/sda mkpart primary fat32 0% 512MB
 #CRIANDO PARTIÇÃO /
-parted /dev/nvme0n1 mkpart primary ext4 512MB 100%
+parted /dev/sda mkpart primary ext4 512MB 100%
 #CRIANDO TABELA DE PARTIÇÃO PARA DISCO 2
-parted /dev/nvme1n1 mklabel gpt
+#parted /dev/nvme1n1 mklabel gpt
 #CRIANDO PARTIÇÃO QUE VAI SER A HOME
-parted /dev/nvme1n1 mkpart primary ext4 0% 100%
+#parted /dev/nvme1n1 mkpart primary ext4 0% 100%
 #CONFERINDO PARTIÇÕES
 clear
-parted /dev/nvme0n1 print
-parted /dev/nvme1n1 print
+parted /dev/sda print
+#parted /dev/nvme1n1 print
 sleep 5
 #FORMATANDO ROOT
-mkfs.ext4 /dev/nvme0n1p2
+mkfs.ext4 /dev/sda2
 #FORMATANDO EFI
-mkfs.fat -F 32 /dev/nvme0n1p1
+mkfs.fat -F 32 /dev/sda1
 #FORMATANDO A HOME
-mkfs.ext4 /dev/nvme1n1p1
+#mkfs.ext4 /dev/nvme1n1p1
 #MONTANDO /
-mount /dev/nvme0n1p2 /mnt
+mount /dev/sda2 /mnt
 #MONTANDO /EFI
-mount --mkdir /dev/nvme0n1p1 /mnt/efi
+mount --mkdir /dev/sda1 /mnt/efi
 #MONTANDO /HOME
-mount --mkdir /dev/nvme1n1p1 /mnt/home
+#mount --mkdir /dev/nvme1n1p1 /mnt/home
 #CONFIGURANDO O PACMAN.CONF
 sed -i '/^#.*Color/s/^#//' /etc/pacman.conf
 sed -i '/^#.*ParallelDownloads/s/^#//' /etc/pacman.conf
