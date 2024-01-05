@@ -1,37 +1,34 @@
 #!/bin/bash
 
 myhostname="archlinux"
-myusername="brendon"
+myusername="e-brendon"
 
 # Função para inserir comandos no sistema montando em /mnt
 arch_chroot(){
     arch-chroot /mnt /bin/bash -c "${1}"
 }
 #repositório do kernel CK
-echo [repo-ck] \nServer = https://mirror.lesviallon.fr/$repo/os/$arch \nServer = http://repo-ck.com/$arch >> /etc/pacman.conf
-pacman-key -r 5EE46C4C --keyserver hkp://pool.sks-keyservers.net && pacman-key --lsign-key 5EE46C4C
+#echo [repo-ck] \nServer = https://mirror.lesviallon.fr/$repo/os/$arch \nServer = http://repo-ck.com/$arch >> /etc/pacman.conf
+#pacman-key -r 5EE46C4C --keyserver hkp://pool.sks-keyservers.net && pacman-key --lsign-key 5EE46C4C
 
 mkfs.fat -F32 -b BOOT /dev/nvme0n1p1
-mkfs.f2fs -l ROOT -O extra_attr,inode_checksum,sb_checksum,compression /dev/nvme0n1p2
-
+#mkfs.f2fs -l ROOT -O extra_attr,inode_checksum,sb_checksum,compression /dev/nvme0n1p2
+btrfs sub cr /mnt/root
+btrfs sub cr /mnt/root/@
+btrfs sub cr /mnt/root/@home
+btrfs sub cr /mnt/root/@snapshots
+btrfs sub list /mnt/; sleep 8;
+umount /mnt
+mount -o defaults,noatime,space_cache,ssd,compress=zstd,subvol=/arch/@ /dev/nvme0n1p2 /mnt
+mkdir /mnt/home;
+mkdir /mnt/.snapshots;
+mount -o defaults,noatime,space_cache,ssd,compress=zstd,subvol=/arch/@home /dev/nvme0n1p2 /mnt/home
+mount -o defaults,noatime,space_cache,ssd,compress=zstd,subvol=/arch/@snapshots /dev/sda2 /mnt/.snapshots
 mount /dev/nvme0n1p2 /mnt
 mkdir /mnt/boot
 mount /dev/nvme0n1p1 /mnt/boot
 
-#btrfs sub cr /mnt/root
-#btrfs sub cr /mnt/root/@
-#btrfs sub cr /mnt/root/@home
-#btrfs sub cr /mnt/root/@snapshots
-#btrfs sub list /mnt/; sleep 8;
-#umount /mnt
-#mount -o defaults,noatime,space_cache,ssd,compress=zstd,subvol=/arch/@ /dev/nvme0n1p2 /mnt
-#mkdir /mnt/home;
-#mkdir /mnt/.snapshots;
-#mount -o defaults,noatime,space_cache,ssd,compress=zstd,subvol=/arch/@home /dev/nvme0n1p2 /mnt/home
-#mount -o defaults,noatime,space_cache,ssd,compress=zstd,subvol=/arch/@snapshots /dev/sda2 /mnt/.snapshots
-
-pacstrap /mnt base base-devel linux-firmware nano vim efibootmgr linux-ck-skylake linux-ck-skylake-headers dhcpcd tlp --noconfirm
-arch_chroot "pacman-key -r 5EE46C4C --keyserver hkp://pool.sks-keyservers.net && pacman-key --lsign-key 5EE46C4C";
+pacstrap /mnt base base-devel linux-firmware nano vim efibootmgr grub linux-zen linux-zen-headers dhcpcd intel-ucode sof-firmware zsh btrfs-progs--noconfirm
 
 genfstab -U -p /mnt >> /mnt/etc/fstab
 cp /etc/pacman.conf /mnt/etc/pacman.conf
@@ -63,7 +60,7 @@ printf "\nUser passwword:\n";
 arch_chroot "passwd $myusername; sleep 2";
 arch_chroot "echo '$myusername ALL=(ALL) ALL' | tee -a /etc/sudoers"; # sudo grep $myusername /etc/sudoers;
 
-arch_chroot "UUID=$(blkid -s UUID -o value /dev/nvme0n1p2)"
+#arch_chroot "UUID=$(blkid -s UUID -o value /dev/nvme0n1p2)"
 #arch_chroot "efibootmgr -q --disk /dev/nvme0n1 --part 1 --create --label "ArchLinux" --loader "\vmlinuz-linux-ck-skylake" --unicode 'root=PARTUUID=$UUID rw initrd=\initramfs-linux-ck-skylake.img quiet rd.udev.log-priority=0 pci=noaer nowatchdog' --verbose";
 
 # pacotes rede e gerenciar arquivos
@@ -72,7 +69,7 @@ p7zip mlocate a52dec faac faad2 flac jasper lame libdca              \
 libdv libmad libmpeg2 libtheora libvorbis libxv wavpack              \ 
 x264 xvidcore gstreamer gst-plugins-base gst-plugins-base-libs       \ 
 gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav gvfs     \ 
-gvfs-afc gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb --noconfirm";
+gvfs-afc gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb gnome tilix --noconfirm";
 
 # Enabling services
 arch_chroot "systemctl enable NetworkManager";
