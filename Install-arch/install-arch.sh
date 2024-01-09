@@ -62,10 +62,7 @@ locale-gen
 echo 'LANG=pt_BR.UTF-8' >> /etc/locale.conf
 echo 'KEYMAP=br-abnt2' >> /etc/vconsole.conf
 echo 'FONT=Lat2-Terminus16' >> /etc/vconsole.conf
-echo 'tie' >> /etc/hostname
-echo '127.0.0.1 localhost' >> /etc/hosts
-echo '::1       localhost' >> /etc/hosts
-echo '127.0.1.1 tie.local   tie' >> /etc/hosts
+printf '\n127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$myhostname.localdomain	$myhostname' >> /etc/hosts
 echo 'root:$SENHA_ROOT' | chpasswd
 useradd -m -g users -G wheel -s /bin/zsh $USUARIO
 echo '$USUARIO:$SENHA_USUARIO' | chpasswd
@@ -76,10 +73,11 @@ pacman -Syu
 grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=arch --recheck
 grub-mkconfig -o /boot/grub/grub.cfg
 yes | pacman -S gvfs gvfs-smb \
-virtualbox virtualbox-host-modules-arch fprintd power-profiles-daemon acpid  usbutils \
+virtualbox virtualbox-host-modules-arch fprintd imagemagick  power-profiles-daemon acpid  usbutils \
 firefox firefox-i18n-pt-br gradience gst-plugin-va gst-plugins-bad vlc tilix\
 unrar unzip p7zip mesa ark intel-media-driver lm_sensors i2c-tools libvdpau-va-gl libva-vdpau-driver libva-utils vdpauinfo vulkan-intel mesa-utils ntfs-3g dosfstools exfat-utils btrfs-progs tailscale zerotier-one git wget curl \
-gst-libav gst-plugins-bad gst-plugins-base figlet gst-plugins-good gst-plugins-ugly gst-plugin-va
+gst-libav gst-plugins-bad gst-plugins-base figlet gst-plugins-good gst-plugins-ugly gst-plugin-va tilix
+#video
 echo "export LIBVA_DRIVER_NAME=iHD" >> /etc/environment
 echo "export VDPAU_DRIVER=va_gl" >> /etc/environment
 wget https://telegram.org/dl/desktop/linux -O /tmp/tsetup.tar.xg && tar xJf /tmp/tsetup.tar.xg -C /opt/
