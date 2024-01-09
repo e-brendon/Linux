@@ -25,6 +25,14 @@ mkfs.btrfs /dev/nvme0n1p2
 #FORMATANDO EFI
 mkfs.fat -F 32 /dev/nvme0n1p1
 #Ajustando volumes btrfs
+mount /dev/nvme0n1p2 /mnt
+btrfs subvolume create /mnt/@
+btrfs subvolume create /mnt/@home
+btrfs subvolume create /mnt/@var
+chattr +C /mnt/@var
+btrfs subvolume create /mnt/@snapshots
+umount /mnt
+#montando partições
 mount -o defaults,noatime,discard,compress=zstd,ssd,subvol=@ /dev/nvme0n1p2 /mnt
 #mkdir -p /mnt/boot/efi
 mkdir /mnt/home
