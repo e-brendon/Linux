@@ -100,3 +100,5 @@ EOF
 
 #umount -R /mnt
 #reboot
+
+## Criador: https://github.com/wopgan/install-arch
