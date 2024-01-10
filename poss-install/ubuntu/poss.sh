@@ -30,6 +30,6 @@ set-gdm-theme set Yaru-purple-dark
 # Instalando pacotes para o zsh
 apt install zsh curl 
 #instalando oh-myzsh
-echo "Temas, Definindo zsh "
+echo "Definindo zsh "
 sleep 5
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
