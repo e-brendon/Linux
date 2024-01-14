@@ -88,7 +88,7 @@ unrar unzip p7zip mesa ark intel-media-driver lm_sensors i2c-tools libvdpau-va-g
 echo "export LIBVA_DRIVER_NAME=iHD" >> /etc/environment
 echo "export VDPAU_DRIVER=va_gl" >> /etc/environment
 
-systemctl enable ssdm NetworkManager bluetooth acpid
+systemctl enable sddm NetworkManager bluetooth acpid
 mkinitcpio -P
 clear
 figlet "Sistema Instalado"
