@@ -4,13 +4,15 @@
 USUARIO='brendon'
 SENHA_USUARIO='123'
 SENHA_ROOT='123'
+DE='gnome'
+GLOGIN='gdm'
 
 #CRIANDO TABELA DE PARTIÇÃO PARA DISCO 1
 parted /dev/nvme0n1 mklabel gpt
 #CRIANDO PARTIÇÃO /EFI
 parted /dev/nvme0n1p1 mkpart primary fat32 0% 512MB
 #CRIANDO PARTIÇÃO /
-parted /dev/nvme0n1p2 mkpart primary ext4 512MB 100%
+parted /dev/nvme0n1p2 mkpart primary btrfs 512MB 100%
 #CRIANDO TABELA DE PARTIÇÃO PARA DISCO 2
 #parted /dev/nvme1n1 mklabel gpt
 #CRIANDO PARTIÇÃO QUE VAI SER A HOME
@@ -50,7 +52,14 @@ sed -i '/^#.*Color/s/^#//' /etc/pacman.conf
 sed -i '/^#.*ParallelDownloads/s/^#//' /etc/pacman.conf
 pacman -Sy
 #INSTALANDO SISTEMA BASE
-pacstrap /mnt base base-devel vim grub intel-ucode linux linux-firmware linux-headers efibootmgr sof-firmware zsh
+pacstrap /mnt base base-devel vim grub intel-ucode linux linux-firmware linux-headers efibootmgr sof-firmware zsh \
+gvfs gvfs-smb virtualbox virtualbox-host-modules-arch fprintd imagemagick acpid  usbutils  firefox firefox-i18n-pt-br \
+gst-plugin-va gst-plugins-bad vlc tilix  unrar unzip p7zip mesa ark intel-media-driver lm_sensors i2c-tools libvdpau-va-gl \
+libva-vdpau-driver libva-utils vdpauinfo vulkan-intel mesa-utils ntfs-3g dosfstools exfat-utils btrfs-progs tailscale zerotier-one git  \
+gst-libav gst-plugins-bad gst-plugins-base figlet gst-plugins-good gst-plugins-ugly gst-plugin-va tilix wget curl \
+power-profiles-daemon $DE
+
+
 genfstab -U /mnt >> /mnt/etc/fstab
 
 #POS INSTALL
@@ -64,7 +73,7 @@ echo 'KEYMAP=br-abnt2' >> /etc/vconsole.conf
 echo 'FONT=Lat2-Terminus16' >> /etc/vconsole.conf
 printf '\n127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$myhostname.localdomain	$myhostname' >> /etc/hosts
 echo 'root:$SENHA_ROOT' | chpasswd
-useradd -m -g users -G wheel -s /bin/zsh $USUARIO
+useradd -m -c "Brendon Esteves" -g users -G wheel -s /bin/zsh $USUARIO
 echo '$USUARIO:$SENHA_USUARIO' | chpasswd
 sed -i '/^#.*%wheel ALL=(ALL) ALL/s/^#//' /etc/sudoers
 sed -i '/^#.*Color/s/^#//' /etc/pacman.conf
@@ -72,23 +81,12 @@ sed -i '/^#.*ParallelDownloads/s/^#//' /etc/pacman.conf
 pacman -Syu
 grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=arch --recheck
 grub-mkconfig -o /boot/grub/grub.cfg
-pacman -S gvfs gvfs-smb virtualbox virtualbox-host-modules-arch fprintd imagemagick acpid  usbutils \
-firefox firefox-i18n-pt-br gst-plugin-va gst-plugins-bad vlc tilix \
-unrar unzip p7zip mesa ark intel-media-driver lm_sensors i2c-tools libvdpau-va-gl libva-vdpau-driver libva-utils vdpauinfo vulkan-intel mesa-utils ntfs-3g dosfstools exfat-utils btrfs-progs tailscale zerotier-one git wget curl \
-gst-libav gst-plugins-bad gst-plugins-base figlet gst-plugins-good gst-plugins-ugly gst-plugin-va tilix \
-plasma plasma-wayland-session dolphin dolphin-plugins kfind konsole spectacle gwenview kate print-manager cups system-config-printer virtualbox virtualbox-host-modules-arch \
-gvfs gvfs-smb power-profiles-daemon kcalc krita filelight ksystemlog kgpg partitionmanager skanlite kmousetool kcharselect krdc kompare sweeper acpid hplip \
-kamoso kdf kcachegrind krfb kbackup kwallet5 kwalletmanager kdeconnect firefox firefox-i18n-pt-br gst-plugin-va gst-plugins-bad vlc \
-unrar unzip p7zip mesa ark intel-media-driver lm_sensors i2c-tools libvdpau-va-gl libva-vdpau-driver libva-utils vdpauinfo vulkan-intel mesa-utils ntfs-3g dosfstools exfat-utils btrfs-progs tailscale zerotier-one git wget curl --noconfirm \ 
 
-
-#echo "auth            optional        pam_kwallet5.so" >> /etc/pam.d/sddm
-#echo "session         optional        pam_kwallet5.so auto_start" >> /etc/pam.d/sddm
 #video
 echo "export LIBVA_DRIVER_NAME=iHD" >> /etc/environment
 echo "export VDPAU_DRIVER=va_gl" >> /etc/environment
 
-systemctl enable sddm NetworkManager bluetooth acpid
+systemctl enable $GLOGIN NetworkManager bluetooth acpid
 mkinitcpio -P
 clear
 figlet "Sistema Instalado"
