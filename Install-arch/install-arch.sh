@@ -73,7 +73,7 @@ pacman -Syu
 grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=arch --recheck
 grub-mkconfig -o /boot/grub/grub.cfg
 pacman -S gvfs gvfs-smb virtualbox virtualbox-host-modules-arch fprintd imagemagick acpid  usbutils \
-firefox firefox-i18n-pt-br gst-plugin-va gst-plugins-bad vlc tilix\
+firefox firefox-i18n-pt-br gst-plugin-va gst-plugins-bad vlc tilix \
 unrar unzip p7zip mesa ark intel-media-driver lm_sensors i2c-tools libvdpau-va-gl libva-vdpau-driver libva-utils vdpauinfo vulkan-intel mesa-utils ntfs-3g dosfstools exfat-utils btrfs-progs tailscale zerotier-one git wget curl \
 gst-libav gst-plugins-bad gst-plugins-base figlet gst-plugins-good gst-plugins-ugly gst-plugin-va tilix \
 plasma plasma-wayland-session dolphin dolphin-plugins kfind konsole spectacle gwenview kate print-manager cups system-config-printer virtualbox virtualbox-host-modules-arch \
