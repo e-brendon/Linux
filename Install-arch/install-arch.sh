@@ -50,7 +50,7 @@ sed -i '/^#.*Color/s/^#//' /etc/pacman.conf
 sed -i '/^#.*ParallelDownloads/s/^#//' /etc/pacman.conf
 pacman -Sy
 #INSTALANDO SISTEMA BASE
-pacstrap /mnt base base-devel vim grub intel-ucode linux linux-firmware tlp tlp-rdw linux-headers efibootmgr sof-firmware zsh gnome
+pacstrap /mnt base base-devel vim grub intel-ucode linux linux-firmware linux-headers efibootmgr sof-firmware zsh
 genfstab -U /mnt >> /mnt/etc/fstab
 
 #POS INSTALL
@@ -73,25 +73,29 @@ pacman -Syu
 grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=arch --recheck
 grub-mkconfig -o /boot/grub/grub.cfg
 yes | pacman -S gvfs gvfs-smb \
-virtualbox virtualbox-host-modules-arch fprintd imagemagick  power-profiles-daemon acpid  usbutils \
-firefox firefox-i18n-pt-br gradience gst-plugin-va gst-plugins-bad vlc tilix\
+virtualbox virtualbox-host-modules-arch fprintd imagemagick acpid  usbutils \
+firefox firefox-i18n-pt-br gst-plugin-va gst-plugins-bad vlc tilix\
 unrar unzip p7zip mesa ark intel-media-driver lm_sensors i2c-tools libvdpau-va-gl libva-vdpau-driver libva-utils vdpauinfo vulkan-intel mesa-utils ntfs-3g dosfstools exfat-utils btrfs-progs tailscale zerotier-one git wget curl \
 gst-libav gst-plugins-bad gst-plugins-base figlet gst-plugins-good gst-plugins-ugly gst-plugin-va tilix
+
+yes | pacman -S plasma-wayland-session dolphin dolphin-plugins kfind konsole spectacle gwenview kate print-manager cups system-config-printer virtualbox virtualbox-host-modules-arch
+yes | pacman -S gvfs gvfs-smb power-profiles-daemon kcalc krita filelight ksystemlog kgpg partitionmanager skanlite kmousetool kcharselect krdc kompare sweeper acpid hplip
+yes | pacman -S kamoso kdf kcachegrind krfb kbackup kwallet5 kwalletmanager kdeconnect firefox firefox-i18n-pt-br gst-plugin-va gst-plugins-bad vlc
+yes | pacman -S unrar unzip p7zip mesa ark intel-media-driver lm_sensors i2c-tools libvdpau-va-gl libva-vdpau-driver libva-utils vdpauinfo vulkan-intel mesa-utils ntfs-3g dosfstools exfat-utils btrfs-progs tailscale zerotier-one git wget curl 
+yes | pacman -S 
+
+echo "auth            optional        pam_kwallet5.so" >> /etc/pam.d/sddm
+echo "session         optional        pam_kwallet5.so auto_start" >> /etc/pam.d/sddm
 #video
 echo "export LIBVA_DRIVER_NAME=iHD" >> /etc/environment
 echo "export VDPAU_DRIVER=va_gl" >> /etc/environment
-wget https://telegram.org/dl/desktop/linux -O /tmp/tsetup.tar.xg && tar xJf /tmp/tsetup.tar.xg -C /opt/
-wget https://vscode.download.prss.microsoft.com/dbazure/download/stable/0ee08df0cf4527e40edc9aa28f4b5bd38bbff2b2/code-stable-x64-1702460840.tar.gz -O /tmp/vscode.tar.gz && tar xzf /tmp/vscode.tar.gz -C /opt/
-#git clone https://aur.archlinux.org/yay.git /home/$USUARIO/AppAUR/yay
 
-ln -sf /opt/VSCode-linux-x64/bin/code /usr/bin/code
+#ln -sf /opt/VSCode-linux-x64/bin/code /usr/bin/code
 #configurações de leitor de biometria
-echo "auth        sufficient      pam_fprintd.so retry=3" >> /etc/pam.d/sudo
-echo "auth        sufficient      pam_unix.so try_first_pass likeauth nullok"
 #configurando a interface 
 
 #gpasswd -a $USUARIO docker
-systemctl enable gdm NetworkManager bluetooth acpid
+systemctl enable ssdm NetworkManager bluetooth acpid
 mkinitcpio -P
 clear
 figlet "Sistema Instalado"
