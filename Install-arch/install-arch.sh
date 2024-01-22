@@ -6,28 +6,24 @@ SENHA_USUARIO='123'
 SENHA_ROOT='123'
 DE='gnome'
 GLOGIN='gdm'
+DISCO='sda'
 
-#CRIANDO TABELA DE PARTIÇÃO PARA DISCO 1
-parted /dev/nvme0n1 mklabel gpt
+#CRIANDO TABELA DE PARTIÇÃO PARA DISCO
+parted /dev/$DISCO mklabel gpt
 #CRIANDO PARTIÇÃO /EFI
-parted /dev/nvme0n1p1 mkpart primary fat32 0% 512MB
+parted /dev/$DISCO mkpart primary fat32 0% 512MB
 #CRIANDO PARTIÇÃO /
-parted /dev/nvme0n1p2 mkpart primary btrfs 512MB 100%
-#CRIANDO TABELA DE PARTIÇÃO PARA DISCO 2
-#parted /dev/nvme1n1 mklabel gpt
-#CRIANDO PARTIÇÃO QUE VAI SER A HOME
-#parted /dev/nvme1n1 mkpart primary ext4 0% 100%
+parted /dev/$DISCO mkpart primary btrfs 512MB 100%
 #CONFERINDO PARTIÇÕES
 clear
-parted /dev/nvme0n1 print
-#parted /dev/nvme1n1 print
+parted /dev/$DISCO print
 sleep 5
 #FORMATANDO ROOT
-mkfs.btrfs /dev/nvme0n1p2
+mkfs.btrfs /dev/${DISCO}2
 #FORMATANDO EFI
-mkfs.fat -F 32 /dev/nvme0n1p1
+mkfs.fat -F 32 /dev/${DISCO}1
 #Ajustando volumes btrfs
-mount /dev/nvme0n1p2 /mnt
+mount /dev/${DISCO}2 /mnt
 btrfs subvolume create /mnt/@
 btrfs subvolume create /mnt/@home
 btrfs subvolume create /mnt/@var
@@ -35,17 +31,18 @@ chattr +C /mnt/@var
 btrfs subvolume create /mnt/@snapshots
 umount /mnt
 #montando partições
-mount -o defaults,noatime,discard,compress=zstd,ssd,subvol=@ /dev/nvme0n1p2 /mnt
+mount -o defaults,noatime,discard,compress=zstd,ssd,subvol=@ /dev/${DISCO}2 /mnt
 #mkdir -p /mnt/boot/efi
 mkdir /mnt/home
 mkdir /mnt/var
 mkdir /mnt/.snapshots
-mount -o defaults,noatime,discard,compress=zstd,ssd,subvol=@home /dev/nvme0n1p2 /mnt/home
-mount -o defaults,noatime,discard,compress=zstd,ssd,subvol=@var /dev/nvme0n1p2 /mnt/var
-mount -o defaults,noatime,discard,compress=zstd,ssd,subvol=@snapshots /dev/nvme0n1p2 /mnt/.snapshots
+mount -o defaults,noatime,discard,compress=zstd,ssd,subvol=@home /dev/${DISCO}2 /mnt/home
+mount -o defaults,noatime,discard,compress=zstd,ssd,subvol=@var /dev/${DISCO}2 /mnt/var
+mount -o defaults,noatime,discard,compress=zstd,ssd,subvol=@snapshots /dev/${DISCO}2 /mnt/.snapshots
 
 #MONTANDO /EFI
-mount --mkdir /dev/nvme0n1p1 /mnt/efi
+mount --mkdir /dev/${DISCO}1 /mnt/efi
+
 
 #CONFIGURANDO O PACMAN.CONF
 sed -i '/^#.*Color/s/^#//' /etc/pacman.conf
