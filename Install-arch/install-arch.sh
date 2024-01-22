@@ -57,7 +57,7 @@ gvfs gvfs-smb virtualbox virtualbox-host-modules-arch fprintd imagemagick acpid 
 gst-plugin-va gst-plugins-bad vlc tilix  unrar unzip p7zip mesa intel-media-driver lm_sensors i2c-tools libvdpau-va-gl \
 libva-vdpau-driver libva-utils vdpauinfo vulkan-intel mesa-utils ntfs-3g dosfstools exfat-utils btrfs-progs tailscale zerotier-one git  \
 gst-libav gst-plugins-bad gst-plugins-base figlet gst-plugins-good gst-plugins-ugly gst-plugin-va tilix wget curl \
-power-profiles-daemon libva-intel-driver libva-mesa-driver luajit sndio v4l2loopback-dkms upower flatpak $DE
+power-profiles-daemon libva-intel-driver libva-mesa-driver luajit sndio v4l2loopback-dkms upower flatpak git $DE
 
 
 genfstab -U /mnt >> /mnt/etc/fstab
