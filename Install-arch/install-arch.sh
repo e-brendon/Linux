@@ -4,6 +4,7 @@
 USUARIO='brendon'
 SENHA_USUARIO='123'
 SENHA_ROOT='123'
+HOSTNAME='ArchLinux'
 DE='gnome'
 GLOGIN='gdm'
 DISCO='sda'
@@ -54,14 +55,14 @@ gvfs gvfs-smb virtualbox virtualbox-host-modules-arch fprintd imagemagick acpid 
 gst-plugin-va gst-plugins-bad vlc tilix  unrar unzip p7zip mesa intel-media-driver lm_sensors i2c-tools libvdpau-va-gl \
 libva-vdpau-driver libva-utils vdpauinfo vulkan-intel mesa-utils ntfs-3g dosfstools exfat-utils btrfs-progs tailscale zerotier-one git  \
 gst-libav gst-plugins-bad gst-plugins-base figlet gst-plugins-good gst-plugins-ugly gst-plugin-va tilix wget curl \
-power-profiles-daemon libva-intel-driver libva-mesa-driver luajit sndio v4l2loopback-dkms upower flatpak git networkmanager  \
-hplip telegram-desktop cups $DE
-
+power-profiles-daemon libva-intel-driver libva-mesa-driver luajit sndio v4l2loopback-dkms upower flatpak networkmanager  \
+hplip telegram-desktop cups git go micro nano  $DE
 
 genfstab -U /mnt >> /mnt/etc/fstab
 
 #POS INSTALL
 arch-chroot /mnt <<EOF
+echo $HOSTNAME >> /etc/hostname
 ln -sf /usr/share/zoneinfo/America/Cuiabá /etc/localtime
 hwclock --systohc
 sed -i '/^#.*pt_BR.UTF-8/s/^#//' /etc/locale.gen
@@ -69,21 +70,21 @@ locale-gen
 echo 'LANG=pt_BR.UTF-8' >> /etc/locale.conf
 echo 'KEYMAP=br-abnt2' >> /etc/vconsole.conf
 echo 'FONT=Lat2-Terminus16' >> /etc/vconsole.conf
-printf '\n127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$myhostname.localdomain	$myhostname' >> /etc/hosts
+#configurando hostname 
+printf '\n127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$HOSTNAME.localdomain	$HOSTNAME' >> /etc/hosts
 echo 'root:$SENHA_ROOT' | chpasswd
 useradd -m -c "Brendon Esteves" -g users -G wheel -s /bin/zsh $USUARIO
 echo '$USUARIO:$SENHA_USUARIO' | chpasswd
+echo '$USUARIO ALL=(ALL) ALL' | tee -a /etc/sudoers
 sed -i '/^#.*%wheel ALL=(ALL) ALL/s/^#//' /etc/sudoers
 sed -i '/^#.*Color/s/^#//' /etc/pacman.conf
 sed -i '/^#.*ParallelDownloads/s/^#//' /etc/pacman.conf
 pacman -Syu
 grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=arch --recheck
 grub-mkconfig -o /boot/grub/grub.cfg
-
 #video
 echo "export LIBVA_DRIVER_NAME=iHD" >> /etc/environment
 echo "export VDPAU_DRIVER=va_gl" >> /etc/environment
-
 systemctl enable $GLOGIN NetworkManager bluetooth upower acpid cups
 mkinitcpio -P
 clear
