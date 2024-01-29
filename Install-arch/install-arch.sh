@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#Atualizando repositorios
+pacman -Syy reflector --noconfirm
+reflector --verbose -l 40 --sort rate --save /etc/pacman.d/mirrorlist
+
 #VARIAVEIS DE USUARIO
 USUARIO='brendon'
 SENHA_USUARIO='123'
