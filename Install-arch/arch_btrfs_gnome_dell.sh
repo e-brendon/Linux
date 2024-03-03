@@ -84,7 +84,7 @@ sed -i '/^#.*%wheel ALL=(ALL) ALL/s/^#//' /etc/sudoers
 sed -i '/^#.*Color/s/^#//' /etc/pacman.conf
 sed -i '/^#.*ParallelDownloads/s/^#//' /etc/pacman.conf
 pacman -Syu
-grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=arch --recheck
+grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=Arch --recheck
 grub-mkconfig -o /boot/grub/grub.cfg
 #video
 echo "export LIBVA_DRIVER_NAME=iHD" >> /etc/environment
