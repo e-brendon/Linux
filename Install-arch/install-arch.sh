@@ -88,6 +88,12 @@ grub-mkconfig -o /boot/grub/grub.cfg
 #video
 echo "export LIBVA_DRIVER_NAME=iHD" >> /etc/environment
 echo "export VDPAU_DRIVER=va_gl" >> /etc/environment
+# qt
+echo "export QT_QPA_PLATFORM=xcb" | tee -a /etc/profile
+echo "export QT_AUTO_SCREEN_SCALE_FACTOR=0" | tee -a /etc/profile
+echo "export QT_QPA_PLATFORMTHEME=qt5ct" | tee -a /etc/profile
+
+
 # instalação telegram
 wget https://telegram.org/dl/desktop/linux -O /tmp/tsetup.tar.xg && tar xJf /tmp/tsetup.tar.xg -C /opt/
 # ativando serviços 
