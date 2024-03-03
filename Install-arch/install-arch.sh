@@ -11,7 +11,7 @@ SENHA_ROOT='123'
 HOSTNAME='ArchLinux'
 DE='gnome'
 GLOGIN='gdm'
-DISCO='sda'
+DISCO='nvme0n1'
 
 #CRIANDO TABELA DE PARTIÇÃO PARA DISCO
 parted /dev/$DISCO mklabel gpt
@@ -45,9 +45,8 @@ mount -o defaults,noatime,discard,compress=zstd,ssd,subvol=@home /dev/${DISCO}2 
 mount -o defaults,noatime,discard,compress=zstd,ssd,subvol=@var /dev/${DISCO}2 /mnt/var
 mount -o defaults,noatime,discard,compress=zstd,ssd,subvol=@snapshots /dev/${DISCO}2 /mnt/.snapshots
 
-#MONTANDO /EFI
-mount --mkdir /dev/${DISCO}1 /mnt/efi
-
+#MONTANDO /EFI 
+mount --mkdir /dev/${DISCO}1 /mnt/boot/efi
 
 #CONFIGURANDO O PACMAN.CONF
 sed -i '/^#.*Color/s/^#//' /etc/pacman.conf
@@ -55,12 +54,12 @@ sed -i '/^#.*ParallelDownloads/s/^#//' /etc/pacman.conf
 pacman -Sy
 #INSTALANDO SISTEMA BASE
 pacstrap /mnt base base-devel vim grub intel-ucode linux linux-firmware linux-headers efibootmgr sof-firmware zsh \
-gvfs gvfs-smb virtualbox virtualbox-host-modules-arch fprintd imagemagick acpid  usbutils  firefox firefox-i18n-pt-br \
-gst-plugin-va gst-plugins-bad vlc tilix  unrar unzip p7zip mesa intel-media-driver lm_sensors i2c-tools libvdpau-va-gl \
-libva-vdpau-driver libva-utils vdpauinfo vulkan-intel mesa-utils ntfs-3g dosfstools exfat-utils btrfs-progs tailscale zerotier-one git  \
+gvfs gvfs-smb fprintd imagemagick acpid  usbutils  ntfs-3g dosfstools exfat-utils btrfs-progs \
+gst-plugin-va gst-plugins-bad unrar unzip p7zip mesa intel-media-driver lm_sensors i2c-tools libvdpau-va-gl \
+libva-vdpau-driver libva-utils vdpauinfo vulkan-intel mesa-utils tailscale zerotier-one git flatpak\
 gst-libav gst-plugins-bad gst-plugins-base figlet gst-plugins-good gst-plugins-ugly gst-plugin-va tilix wget curl \
-power-profiles-daemon libva-intel-driver libva-mesa-driver luajit sndio v4l2loopback-dkms upower flatpak networkmanager  \
-hplip telegram-desktop cups git go micro nano  $DE
+power-profiles-daemon libva-intel-driver libva-mesa-driver luajit sndio v4l2loopback-dkms upower  networkmanager  \
+hplip cups git go micro nano cmake libevdev libconfig systemd-libs glib2 $DE
 
 genfstab -U /mnt >> /mnt/etc/fstab
 
@@ -89,7 +88,10 @@ grub-mkconfig -o /boot/grub/grub.cfg
 #video
 echo "export LIBVA_DRIVER_NAME=iHD" >> /etc/environment
 echo "export VDPAU_DRIVER=va_gl" >> /etc/environment
-systemctl enable $GLOGIN NetworkManager bluetooth upower acpid cups
+# instalação telegram
+wget https://telegram.org/dl/desktop/linux -O /tmp/tsetup.tar.xg && tar xJf /tmp/tsetup.tar.xg -C /opt/
+# ativando serviços 
+systemctl enable $GLOGIN NetworkManager bluetooth upower acpid
 mkinitcpio -P
 clear
 figlet "Sistema Instalado"
