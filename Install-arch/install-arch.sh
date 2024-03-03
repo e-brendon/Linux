@@ -58,7 +58,7 @@ gvfs gvfs-smb fprintd imagemagick acpid  usbutils  ntfs-3g dosfstools exfat-util
 gst-plugin-va gst-plugins-bad unrar unzip p7zip mesa intel-media-driver lm_sensors i2c-tools libvdpau-va-gl \
 libva-vdpau-driver libva-utils vdpauinfo vulkan-intel mesa-utils tailscale zerotier-one git flatpak\
 gst-libav gst-plugins-bad gst-plugins-base figlet gst-plugins-good gst-plugins-ugly gst-plugin-va tilix wget curl \
-power-profiles-daemon libva-intel-driver libva-mesa-driver luajit sndio v4l2loopback-dkms upower  networkmanager  \
+power-profiles-daemon libva-mesa-driver luajit sndio v4l2loopback-dkms upower  networkmanager  \
 hplip cups git go micro nano cmake libevdev libconfig systemd-libs glib2 $DE
 
 genfstab -U /mnt >> /mnt/etc/fstab
