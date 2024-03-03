@@ -47,7 +47,7 @@ mount -o defaults,noatime,discard,compress=zstd,ssd,subvol=@var /dev/${DISCO}2 /
 mount -o defaults,noatime,discard,compress=zstd,ssd,subvol=@snapshots /dev/${DISCO}2 /mnt/.snapshots
 
 #MONTANDO /EFI 
-mount --mkdir /dev/${DISCO}1 /mnt/boot/efi
+mount --mkdir /dev/${DISCO}1 /mnt/efi
 
 #CONFIGURANDO O PACMAN.CONF
 sed -i '/^#.*Color/s/^#//' /etc/pacman.conf
