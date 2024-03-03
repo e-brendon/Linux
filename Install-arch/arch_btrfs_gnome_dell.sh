@@ -11,20 +11,21 @@ SENHA_ROOT='123'
 HOSTNAME='ArchLinux'
 DE='gnome'
 GLOGIN='gdm'
-DISCO='nvme0n1'
+DISCO='nvme0n1p'
+DISCO_PART='nvme0n1'
 
 #CRIANDO TABELA DE PARTIÇÃO PARA DISCO
-parted /dev/$DISCO mklabel gpt
+parted /dev/$DISCO_PART mklabel gpt
 #CRIANDO PARTIÇÃO /EFI
-parted /dev/$DISCO mkpart primary fat32 0% 512MB
+parted /dev/$DISCO_PART mkpart primary fat32 0% 512MB
 #CRIANDO PARTIÇÃO /
-parted /dev/$DISCO mkpart primary btrfs 512MB 100%
+parted /dev/$DISCO_PART mkpart primary btrfs -f 512MB 100%
 #CONFERINDO PARTIÇÕES
 clear
 parted /dev/$DISCO print
 sleep 5
 #FORMATANDO ROOT
-mkfs.btrfs /dev/${DISCO}2
+mkfs.btrfs -f /dev/${DISCO}2
 #FORMATANDO EFI
 mkfs.fat -F 32 /dev/${DISCO}1
 #Ajustando volumes btrfs
@@ -56,7 +57,7 @@ pacman -Sy
 pacstrap /mnt base base-devel vim grub intel-ucode linux linux-firmware linux-headers efibootmgr sof-firmware zsh \
 gvfs gvfs-smb fprintd imagemagick acpid  usbutils  ntfs-3g dosfstools exfat-utils btrfs-progs \
 gst-plugin-va gst-plugins-bad unrar unzip p7zip mesa intel-media-driver lm_sensors i2c-tools libvdpau-va-gl \
-libva-vdpau-driver libva-utils vdpauinfo vulkan-intel mesa-utils tailscale zerotier-one git flatpak\
+libva-vdpau-driver libva-utils vdpauinfo vulkan-intel mesa-utils tailscale zerotier-one git flatpak \
 gst-libav gst-plugins-bad gst-plugins-base figlet gst-plugins-good gst-plugins-ugly gst-plugin-va tilix wget curl \
 power-profiles-daemon libva-mesa-driver luajit sndio v4l2loopback-dkms upower  networkmanager  \
 hplip cups git go micro nano cmake libevdev libconfig systemd-libs glib2 $DE
