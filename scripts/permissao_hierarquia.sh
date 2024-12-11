@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Diretório raiz do compartilhamento
-BASE_DIR="/mnt/share/compartilhamento"
+BASE_DIR="/seu_diretorio"
 
 # Loop por todos os diretórios no compartilhamento
 for dir in "$BASE_DIR"/*; do
