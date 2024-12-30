@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Configurações iniciais
-LOG_FILE="/tmp/ufw.log"
+mkdir -r /var/log/ufw-ddos/
+LOG_FILE="/var/log/ufw-ddos/ufw.log"
 
 # Função para verificar erros e sair em caso de falha
 check_error() {
